@@ -1,0 +1,270 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ nomination.title_ru }} - {{ settings.school_name_ru }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <button class="back-btn" onclick="history.back()" aria-label="Вернуться назад">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-key="back">Назад</span>
+        </button>
+        <h1>{{ nomination.title_ru }}</h1>
+        <p>{{ nomination.description_ru }}</p>
+        <div class="nomination-meta">
+            <span class="total-recipients">
+                <i class="fas fa-users" aria-hidden="true"></i>
+                Всего получателей: {{ recipients.paginator.count }}
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="recipients-section">
+    <div class="container">
+        {% if recipients %}
+            <div class="recipients-grid">
+                {% for recipient in recipients %}
+                    <div class="recipient-card" onclick="window.location.href='{% url 'student_detail' recipient.student.student_id %}'">
+                        <div class="recipient-photo">
+                            {% if recipient.student.photo %}
+                                <img src="{{ recipient.student.photo.url }}" alt="Фото {{ recipient.student.full_name }}" loading="lazy">
+                            {% else %}
+                                <div class="recipient-avatar">
+                                    <i class="fas fa-user" aria-hidden="true"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="recipient-info">
+                            <h4>{{ recipient.student.full_name }}</h4>
+                            <p class="student-class">{{ recipient.student.school_class }}</p>
+                            <p class="achievement-date">{{ recipient.date_awarded|date:"d.m.Y" }}</p>
+                            {% if recipient.score %}
+                                <p class="achievement-score">{{ recipient.score }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="nomination-badge">
+                            <i class="{{ nomination.icon }}" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if recipients.has_other_pages %}
+                <div class="pagination-container">
+                    <nav aria-label="Навигация по страницам">
+                        <ul class="pagination">
+                            {% if recipients.has_previous %}
+                                <li><a href="?page=1" aria-label="Первая страница">&laquo;&laquo;</a></li>
+                                <li><a href="?page={{ recipients.previous_page_number }}" aria-label="Предыдущая страница">&laquo;</a></li>
+                            {% endif %}
+                            
+                            {% for num in recipients.paginator.page_range %}
+                                {% if recipients.number == num %}
+                                    <li class="active"><span aria-current="page">{{ num }}</span></li>
+                                {% elif num > recipients.number|add:'-3' and num < recipients.number|add:'3' %}
+                                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if recipients.has_next %}
+                                <li><a href="?page={{ recipients.next_page_number }}" aria-label="Следующая страница">&raquo;</a></li>
+                                <li><a href="?page={{ recipients.paginator.num_pages }}" aria-label="Последняя страница">&raquo;&raquo;</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="{{ nomination.icon }}" aria-hidden="true"></i>
+                <h3>Пока нет получателей</h3>
+                <p>Получатели этой номинации будут добавлены позже</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.nomination-meta {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--card-color);
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.total-recipients {
+    color: var(--text-secondary);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.recipients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.recipient-card {
+    background: var(--card-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.recipient-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+}
+
+.recipient-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.recipient-photo {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.recipient-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+}
+
+.recipient-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto;
+}
+
+.recipient-info h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.student-class {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.achievement-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.achievement-score {
+    color: var(--success-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.achievement-desc {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.nomination-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+}
+
+.pagination li a,
+.pagination li span {
+    padding: 0.5rem 1rem;
+    background: var(--card-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.pagination li a:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.pagination li.active span {
+    background: var(--primary-color);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .recipients-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    
+    .recipient-card {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

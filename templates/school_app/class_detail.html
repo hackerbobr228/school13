@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ school_class }} - {{ settings.school_name_ru }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <button class="back-btn" onclick="history.back()" aria-label="Вернуться назад">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-key="back">Назад</span>
+        </button>
+        <h1 data-translate="class-title" data-original="Класс {{ school_class }}">Класс {{ school_class }}</h1>
+        <div class="class-info">
+            <p><strong data-translate="class-teacher" data-original="Классный руководитель:">Классный руководитель:</strong> {{ school_class.class_teacher }}</p>
+            <p><strong data-translate="room-number" data-original="Кабинет:">Кабинет:</strong> {{ school_class.room_number }}</p>
+            <p><strong data-translate="student-count" data-original="Количество учеников:">Количество учеников:</strong> {{ school_class.student_count }}</p>
+            {% if school_class.description %}
+                <p><strong data-key="class-description">Описание:</strong> {{ school_class.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="students-section">
+    <div class="container">
+        <h2>
+            <span data-key="students">Ученики</span> 
+            <span data-key="class">класса</span> 
+            <span data-translate="class-title" data-original="{{ school_class }}">{{ school_class }}</span>
+        </h2>
+        
+        {% if students %}
+            <div class="students-grid">
+                {% for student in students %}
+                    <div class="student-card" onclick="window.location.href='{% url 'student_detail' student.student_id %}'">
+                        <div class="student-photo">
+                            {% if student.photo %}
+                                <img src="{{ student.photo.url }}" alt="Фото {{ student.full_name }}" loading="lazy">
+                            {% else %}
+                                <div class="student-avatar">
+                                    <i class="fas fa-user" aria-hidden="true"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="student-info">
+                            <h3>{{ student.full_name }}</h3>
+                            <p class="student-age" data-translate="age" data-original="{{ student.age }} лет">{{ student.age }} лет</p>
+                            {% if student.achievements %}
+                                <p class="student-achievements">{{ student.achievements|truncatewords:10 }}</p>
+                            {% endif %}
+                            <div class="student-meta">
+                                <span class="student-id">ID: {{ student.student_id }}</span>
+                                {% if student.nominations.exists %}
+                                    <span class="nominations-count">
+                                        <i class="fas fa-trophy" aria-hidden="true"></i> 
+                                        {{ student.nominations.count }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if students.has_other_pages %}
+                <div class="pagination-container">
+                    <nav aria-label="Навигация по страницам">
+                        <ul class="pagination">
+                            {% if students.has_previous %}
+                                <li><a href="?page=1" aria-label="Первая страница" data-key="first-page">&laquo;&laquo;</a></li>
+                                <li><a href="?page={{ students.previous_page_number }}" aria-label="Предыдущая страница" data-key="previous-page">&laquo;</a></li>
+                            {% endif %}
+                            
+                            {% for num in students.paginator.page_range %}
+                                {% if students.number == num %}
+                                    <li class="active"><span aria-current="page">{{ num }}</span></li>
+                                {% elif num > students.number|add:'-3' and num < students.number|add:'3' %}
+                                    <li><a href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if students.has_next %}
+                                <li><a href="?page={{ students.next_page_number }}" aria-label="Следующая страница" data-key="next-page">&raquo;</a></li>
+                                <li><a href="?page={{ students.paginator.num_pages }}" aria-label="Последняя страница" data-key="last-page">&raquo;&raquo;</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-users" aria-hidden="true"></i>
+                <h3 data-key="no-students">В этом классе пока нет учеников</h3>
+                <p data-key="students-will-be-added">Ученики будут добавлены позже</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.class-info {
+    background: var(--card-color);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    box-shadow: var(--shadow);
+}
+
+.class-info p {
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.students-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.student-card {
+    background: var(--card-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.student-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.student-photo {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.student-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+.student-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin: 0 auto;
+}
+
+.student-info h3 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.student-age {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.student-achievements {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.student-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.nominations-count {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 0.5rem;
+}
+
+.pagination li a,
+.pagination li span {
+    padding: 0.5rem 1rem;
+    background: var(--card-color);
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.pagination li a:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.pagination li.active span {
+    background: var(--primary-color);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .students-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .student-card {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}

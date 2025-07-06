@@ -1,0 +1,570 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 data-key="welcome">Добро пожаловать в {{ settings.school_name_ru }}</h1>
+        <p data-key="hero-description">Место, где формируется будущее наших детей через качественное образование и всестороннее развитие</p>
+        <a href="{% url 'nominations' %}" class="cta-button" data-key="learn-more">Узнать больше</a>
+    </div>
+    <div class="hero-image-container">
+        <div class="school-photo-wrapper">
+            <img src="{% static 'images/school-photo.jpeg' %}" 
+                 alt="Школа №13 - главное здание" 
+                 class="school-photo"
+                 loading="eager">
+            <div class="photo-overlay">
+                <div class="photo-badge">
+                    <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                    <span>{{ settings.school_name_ru }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-decorative-icon">
+            <i class="fas fa-school" aria-hidden="true"></i>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <h2 data-key="our-achievements">Наши достижения</h2>
+        <div class="stats-grid">
+            <div class="stat-card clickable-card" onclick="navigateToPage('{% url 'classes' %}')">
+                <div class="stat-icon">
+                    <i class="fas fa-users" aria-hidden="true"></i>
+                </div>
+                <div class="stat-number">{{ total_students }}</div>
+                <div class="stat-label" data-key="total-students">Всего Учеников</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </div>
+            </div>
+            
+            <div class="stat-card clickable-card" onclick="navigateToPage('{% url 'classes' %}')">
+                <div class="stat-icon">
+                    <i class="fas fa-chalkboard" aria-hidden="true"></i>
+                </div>
+                <div class="stat-number">{{ total_classes }}</div>
+                <div class="stat-label" data-key="classes-count">Классы</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </div>
+            </div>
+            
+
+            
+            <div class="stat-card clickable-card" onclick="navigateToPage('{% url 'nominations' %}')">
+                <div class="stat-icon">
+                    {% if nominations.first.image %}
+                        <img src="{{ nominations.first.image.url }}" alt="Номинации" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); box-shadow: var(--shadow-md);">
+                    {% else %}
+                        <i class="fas fa-medal" aria-hidden="true"></i>
+                    {% endif %}
+                </div>
+                <div class="stat-number">{{ total_nominations }}</div>
+                <div class="stat-label" data-key="nominations-count">Номинации</div>
+                <div class="card-arrow">
+                    <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 data-key="why-choose-us">Почему выбирают нас</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-book-open" aria-hidden="true"></i>
+                </div>
+                <h3 data-key="quality-education">Качественное образование</h3>
+                <p data-key="quality-education-desc">Современные методы обучения и опытные педагоги</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-star" aria-hidden="true"></i>
+                </div>
+                <h3 data-key="student-achievements">Достижения учеников</h3>
+                <p data-key="student-achievements-desc">Признание талантов и поощрение успехов</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users-cog" aria-hidden="true"></i>
+                </div>
+                <h3 data-key="individual-approach">Индивидуальный подход</h3>
+                <p data-key="individual-approach-desc">Учитываем особенности каждого ученика</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Enhanced Hero Section with School Photo Integration */
+.hero {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem 0;
+    margin-top: 80px;
+    background: var(--gradient-hero);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--line-secondary);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 25% 25%, var(--school-icon-glow) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(217, 119, 6, 0.05) 0%, transparent 50%), var(--pattern-subtle);
+    background-size: 100% 100%, 100% 100%, 60px 60px;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.hero-content {
+    flex: 1;
+    padding: 2rem;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-content p {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    line-height: 1.7;
+    font-weight: 500;
+}
+
+.cta-button {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.25rem 2.5rem;
+    border: 3px solid transparent;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: var(--shadow-colored);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl), var(--shadow-colored);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* School Photo Container */
+.hero-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+}
+
+.school-photo-wrapper {
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    background: var(--card-color);
+    border: 4px solid var(--card-border);
+}
+
+.school-photo-wrapper:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 35px 70px -12px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 50px rgba(30, 64, 175, 0.15);
+    border-color: var(--border-accent);
+}
+
+.school-photo {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 16/10;
+    transition: all 0.3s ease;
+    filter: brightness(1.05) contrast(1.1) saturate(1.1);
+}
+
+/* Universal theme compatibility */
+[data-theme="dark"] .school-photo {
+    filter: brightness(0.95) contrast(1.05) saturate(1.05);
+}
+
+.school-photo-wrapper:hover .school-photo {
+    transform: scale(1.05);
+}
+
+/* Photo Overlay */
+.photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.8) 0%,
+        rgba(0, 0, 0, 0.4) 50%,
+        transparent 100%
+    );
+    padding: 2rem;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+}
+
+.school-photo-wrapper:hover .photo-overlay {
+    transform: translateY(0);
+}
+
+.photo-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.photo-badge i {
+    font-size: 1.5rem;
+    color: #fbbf24;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Decorative Icon */
+.hero-decorative-icon {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 4rem;
+    color: var(--school-icon-color);
+    opacity: 0.3;
+    filter: drop-shadow(0 4px 8px var(--school-icon-shadow));
+    animation: float 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+}
+
+/* Enhanced clickable cards styling */
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.clickable-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(30, 64, 175, 0.1), transparent);
+    transition: left 0.6s ease;
+}
+
+.clickable-card:hover::before {
+    left: 100%;
+}
+
+.clickable-card:hover {
+    transform: translateY(-12px) scale(1.02);
+}
+
+.clickable-card:active {
+    transform: translateY(-8px) scale(1.01);
+    transition: all 0.1s ease;
+}
+
+.card-arrow {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 44px;
+    height: 44px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+    border: 2px solid white;
+}
+
+.clickable-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .hero-content {
+        padding: 1rem;
+        order: 2;
+    }
+
+    .hero-image-container {
+        order: 1;
+        margin-bottom: 2rem;
+        padding: 1rem;
+    }
+
+    .school-photo-wrapper {
+        max-width: 500px;
+    }
+
+    .hero-decorative-icon {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-arrow {
+        width: 40px;
+        height: 40px;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .school-photo-wrapper {
+        max-width: 400px;
+        border-radius: 1.5rem;
+    }
+
+    .photo-overlay {
+        padding: 1.5rem;
+    }
+
+    .photo-badge {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .clickable-card {
+        border-width: 2px;
+    }
+
+    .school-photo-wrapper {
+        max-width: 350px;
+        border-width: 3px;
+        border-radius: 1.25rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .school-photo-wrapper {
+        box-shadow: none !important;
+        border: 2px solid #000 !important;
+    }
+
+    .photo-overlay {
+        display: none !important;
+    }
+
+    .hero-decorative-icon {
+        display: none !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function navigateToPage(url) {
+    const clickedCard = event.currentTarget;
+    const arrow = clickedCard.querySelector('.card-arrow');
+    
+    if (arrow) {
+        arrow.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+    
+    setTimeout(() => {
+        window.location.href = url;
+    }, 200);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const clickableCards = document.querySelectorAll('.clickable-card');
+    
+    clickableCards.forEach(card => {
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
+        
+        const label = card.querySelector('.stat-label');
+        if (label) {
+            card.setAttribute('aria-label', `Перейти к разделу: ${label.textContent}`);
+        }
+    });
+    
+    // Enhanced ripple effect for cards
+    clickableCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            const ripple = document.createElement('div');
+            const rect = card.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                background: rgba(30, 64, 175, 0.2);
+                border-radius: 50%;
+                transform: scale(0);
+                animation: ripple 0.6s ease-out;
+                pointer-events: none;
+                z-index: 1;
+                border: 2px solid rgba(30, 64, 175, 0.3);
+            `;
+            
+            card.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+
+    // School photo lazy loading and optimization
+    const schoolPhoto = document.querySelector('.school-photo');
+    if (schoolPhoto) {
+        // Add loading state
+        schoolPhoto.addEventListener('load', function() {
+            this.style.opacity = '1';
+            this.parentElement.classList.add('loaded');
+        });
+
+        // Add error handling
+        schoolPhoto.addEventListener('error', function() {
+            console.warn('School photo failed to load, showing fallback');
+            this.style.display = 'none';
+        });
+
+        // Intersection Observer for enhanced loading
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(schoolPhoto.parentElement);
+    }
+});
+
+const customStyleTag = document.createElement('style');
+customStyleTag.textContent = `
+    @keyframes ripple {
+        to {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+
+    .school-photo {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .school-photo-wrapper.loaded .school-photo {
+        opacity: 1;
+    }
+
+    .school-photo-wrapper.in-view {
+        animation: slideInFromRight 0.8s ease-out;
+    }
+
+    @keyframes slideInFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+`;
+document.head.appendChild(customStyleTag);
+
+{% endblock %}

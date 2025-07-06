@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Номинации - {{ settings.school_name_ru }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 data-key="student-nominations">Номинации учеников</h1>
+        <p data-key="nominations-description">Признание достижений и талантов наших учеников</p>
+    </div>
+</section>
+
+<section class="nominations-section">
+    <div class="container">
+        <div class="nominations-grid">
+            {% for nomination in nominations %}
+                <div class="nomination-card">
+    <div class="nomination-icon">
+        {% if nomination.image %}
+            <img src="{{ nomination.image.url }}" alt="{{ nomination.title_ru }}" style="width: 100%; border-radius: 12px;">
+        {% else %}
+            <i class="fas fa-award" aria-hidden="true"></i>
+        {% endif %}
+    </div>
+    
+    <h3>{{ nomination.title_ru }}</h3>
+    <p>{{ nomination.description_ru }}</p>
+    
+    <div class="nomination-stats">
+        <span class="recipients-count">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            {{ nomination.recipients.count }} получателей
+        </span>
+    </div>
+    
+    <a href="{% url 'nomination_detail' nomination.name %}" class="view-recipients-btn" data-key="view-recipients">
+        Просмотр Получателей
+    </a>
+</div>
+
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-trophy" aria-hidden="true"></i>
+                    <h3>Номинации не найдены</h3>
+                    <p>Номинации будут добавлены позже</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.nomination-stats {
+    margin: 1rem 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.recipients-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.view-recipients-btn {
+    text-decoration: none;
+    display: inline-block;
+}
+</style>
+{% endblock %}

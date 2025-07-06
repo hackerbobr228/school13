@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Классы - {{ settings.school_name_ru }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 data-key="our-classes">Наши классы</h1>
+        <p data-key="classes-description">Выберите класс для просмотра информации об учениках</p>
+    </div>
+</section>
+
+<section class="classes-grid-section">
+    <div class="container">
+        <div class="classes-grid">
+            {% for grade, classes in classes_by_grade.items %}
+                {% for school_class in classes %}
+                    <div class="class-card" onclick="window.location.href='{% url 'class_detail' school_class.grade school_class.section %}'">
+                        <div class="class-number">{{ school_class.grade }}</div>
+                        <h3>
+                            {{ school_class.section }} 
+                            <span data-key="grade">класс</span>
+                        </h3>
+                        {% if school_class.grade <= 4 %}
+                            <p data-key="elementary">Начальная школа</p>
+                        {% elif school_class.grade <= 8 %}
+                            <p data-key="middle-school">Средняя школа</p>
+                        {% else %}
+                            <p data-key="high-school">Старшая школа</p>
+                        {% endif %}
+                        <div class="class-info">
+                            <p><strong data-key="class-teacher">Учитель:</strong> {{ school_class.class_teacher }}</p>
+                            <p><strong data-key="room-number">Кабинет:</strong> {{ school_class.room_number }}</p>
+                        </div>
+                        <div class="class-stats">
+                            <span>
+                                <i class="fas fa-users" aria-hidden="true"></i> 
+                                <span data-translate="student-count" data-original="{{ school_class.student_count }} учеников">{{ school_class.student_count }} учеников</span>
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% empty %}
+                <div class="empty-state">
+                    <i class="fas fa-chalkboard" aria-hidden="true"></i>
+                    <h3>Классы не найдены</h3>
+                    <p>Классы будут добавлены позже</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.class-info {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.class-info p {
+    margin: 0.25rem 0;
+}
+
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+</style>
+{% endblock %}

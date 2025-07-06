@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ settings.school_name_ru }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}Официальный сайт {{ settings.school_name_ru }}{% endblock %}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% load static %}{% static 'css/styles.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                <span data-key="school-name">{{ settings.school_name_ru }}</span>
+            </div>
+            <ul class="nav-menu" role="menubar">
+                <li class="nav-item" role="none">
+                    <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" 
+                       data-key="home" role="menuitem">Главная</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="{% url 'classes' %}" class="nav-link {% if 'class' in request.resolver_match.url_name %}active{% endif %}" 
+                       data-key="classes" role="menuitem">Классы</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="{% url 'nominations' %}" class="nav-link {% if 'nomination' in request.resolver_match.url_name %}active{% endif %}" 
+                       data-key="nominations" role="menuitem">Номинации</a>
+                </li>
+            </ul>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="lang-toggle" id="langToggle" aria-label="Переключить язык">
+                    <span class="lang-text">УЗ</span>
+                </button>
+            </div>
+            <button class="hamburger" id="hamburger" aria-label="Открыть меню" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-key="school-name">{{ settings.school_name_ru }}</h3>
+                    <p data-key="footer-description">Образование для будущего</p>
+                </div>
+                <div class="footer-section">
+                    <h4 data-key="quick-links">Быстрые ссылки</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}" data-key="home">Главная</a></li>
+                        <li><a href="{% url 'classes' %}" data-key="classes">Классы</a></li>
+                        <li><a href="{% url 'nominations' %}" data-key="nominations">Номинации</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 data-key="contact">Контакты</h4>
+                    <p><i class="fas fa-phone" aria-hidden="true"></i> {{ settings.phone }}</p>
+                    <p class="footer-telegram">
+  <a href="{{ settings.telegram }}" target="_blank">
+    <i class="fab fa-telegram"></i>
+    <span>13 Maktab</span>
+  </a>
+</p>
+
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 <span data-key="school-name">{{ settings.school_name_ru }}</span>. 
+                   <span data-key="all-rights-reserved">Все права защищены.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

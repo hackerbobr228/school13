@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ student.full_name }} - {{ settings.school_name_ru }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <button class="back-btn" onclick="history.back()" aria-label="Вернуться назад">
+            <i class="fas fa-arrow-left" aria-hidden="true"></i> <span data-key="back">Назад</span>
+        </button>
+        <h1>{{ student.full_name }}</h1>
+        <p>
+            <span data-key="student">Ученик</span> 
+            <span data-key="class">класса</span> 
+            <span data-translate="class-title" data-original="{{ student.school_class }}">{{ student.school_class }}</span>
+        </p>
+    </div>
+</section>
+
+<section class="student-profile">
+    <div class="container">
+        <div class="profile-grid">
+            <div class="profile-photo">
+                {% if student.photo %}
+                    <img src="{{ student.photo.url }}" alt="Фото {{ student.full_name }}" class="student-photo-large">
+                {% else %}
+                    <div class="student-avatar-large">
+                        <i class="fas fa-user" aria-hidden="true"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="profile-info">
+                <div class="info-card">
+                    <h2 data-key="personal-info">Личная информация</h2>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label data-key="full-name">Полное имя:</label>
+                            <span>{{ student.full_name }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label data-key="age">Возраст:</label>
+                            <span data-translate="age" data-original="{{ student.age }} лет">{{ student.age }} лет</span>
+                        </div>
+                        <div class="info-item">
+                            <label data-key="birth-date">Дата рождения:</label>
+                            <span>{{ student.birth_date|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label data-key="gender">Пол:</label>
+                            <span data-translate="gender" data-original="{% if student.gender == 'M' %}Мужской{% else %}Женский{% endif %}">{% if student.gender == 'M' %}Мужской{% else %}Женский{% endif %}</span>
+                        </div>
+                        <div class="info-item">
+                            <label data-key="student-id">ID ученика:</label>
+                            <span>{{ student.student_id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <label data-key="class">Класс:</label>
+                            <span data-translate="class-title" data-original="{{ student.school_class }}">{{ student.school_class }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if student.phone or student.email %}
+                <div class="info-card">
+                    <h3 data-key="contact-info">Контактная информация</h3>
+                    <div class="info-grid">
+                        {% if student.phone %}
+                        <div class="info-item">
+                            <label data-key="phone">Телефон:</label>
+                            <span>{{ student.phone }}</span>
+                        </div>
+                        {% endif %}
+                        {% if student.email %}
+                        <div class="info-item">
+                            <label data-key="email">Email:</label>
+                            <span>{{ student.email }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if student.parent_name or student.parent_phone %}
+                <div class="info-card">
+                    <h3 data-key="parent-info">Информация о родителях</h3>
+                    <div class="info-grid">
+                        {% if student.parent_name %}
+                        <div class="info-item">
+                            <label data-key="parent-name">ФИО родителя:</label>
+                            <span>{{ student.parent_name }}</span>
+                        </div>
+                        {% endif %}
+                        {% if student.parent_phone %}
+                        <div class="info-item">
+                            <label data-key="parent-phone">Телефон родителя:</label>
+                            <span>{{ student.parent_phone }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if student.achievements or student.hobbies %}
+        <div class="additional-info">
+            {% if student.achievements %}
+            <div class="info-card">
+                <h3><i class="fas fa-trophy" aria-hidden="true"></i> <span data-key="achievements">Достижения</span></h3>
+                <p>{{ student.achievements|linebreaks }}</p>
+            </div>
+            {% endif %}
+            
+            {% if student.hobbies %}
+            <div class="info-card">
+                <h3><i class="fas fa-heart" aria-hidden="true"></i> <span data-key="hobbies">Увлечения</span></h3>
+                <p>{{ student.hobbies|linebreaks }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% if nominations %}
+        <div class="nominations-section">
+            <h2><i class="fas fa-medal" aria-hidden="true"></i> <span data-key="received-nominations">Полученные номинации</span></h2>
+            <div class="nominations-grid">
+                {% for nomination in nominations %}
+                <div class="nomination-card">
+                    <div class="nomination-header">
+                        <div class="nomination-icon">
+                            <i class="{{ nomination.nomination.icon }}" aria-hidden="true"></i>
+                        </div>
+                        <h4>{{ nomination.nomination.title_ru }}</h4>
+                    </div>
+                    <div class="nomination-details">
+                        <p><strong data-key="award-date">Дата получения:</strong> {{ nomination.date_awarded|date:"d.m.Y" }}</p>
+                        {% if nomination.score %}
+                            <p><strong data-key="result">Результат:</strong> {{ nomination.score }}</p>
+                        {% endif %}
+                        <p><strong data-key="description">Описание:</strong> {{ nomination.achievement_description }}</p>
+                        {% if nomination.certificate_image %}
+                            <div class="certificate-preview">
+                                <img src="{{ nomination.certificate_image.url }}" alt="Сертификат" class="certificate-image">
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.profile-photo {
+    text-align: center;
+}
+
+.student-photo-large {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--primary-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.student-avatar-large {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.info-card {
+    background: var(--card-color);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.info-card h2,
+.info-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.info-item span {
+    color: var(--text-primary);
+}
+
+.additional-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.nominations-section {
+    margin: 3rem 0;
+}
+
+.nominations-section h2 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.nominations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.nomination-card {
+    background: var(--card-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent-color);
+}
+
+.nomination-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.nomination-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.nomination-header h4 {
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.nomination-details p {
+    margin: 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.certificate-preview {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.certificate-image {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.certificate-image:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .student-photo-large,
+    .student-avatar-large {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .student-avatar-large {
+        font-size: 4rem;
+    }
+    
+    .additional-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .nominations-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
+</style>
+{% endblock %}
