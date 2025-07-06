@@ -1,0 +1,15 @@
+# Игнорировать настройки
+school_website/settings.py
+
+# Виртуальное окружение
+venv/
+
+# Python временные файлы
+__pycache__/
+*.pyc
+
+# Базы данных
+*.sqlite3
+
+# Секреты
+.env
