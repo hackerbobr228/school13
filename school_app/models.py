@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from PIL import Image
 import os
+import uuid 
 
 class SchoolClass(models.Model):
     GRADE_CHOICES = [
@@ -102,14 +103,19 @@ class Student(models.Model):
         today = date.today()
         return today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
     
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.photo:
-            img = Image.open(self.photo.path)
-            if img.height > 300 or img.width > 300:
-                output_size = (300, 300)
-                img.thumbnail(output_size)
-                img.save(self.photo.path)
+def save(self, *args, **kwargs):
+    if not self.student_id:
+        self.student_id = str(uuid.uuid4())[:8]  # короткий, уникальный id
+
+    super().save(*args, **kwargs)
+
+    # Обработка фото (оставляем как есть)
+    if self.photo:
+        img = Image.open(self.photo.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.photo.path)
 
 class Nomination(models.Model):
     NOMINATION_TYPES = [

@@ -25,11 +25,7 @@
         {% if recipients %}
             <div class="recipients-grid">
                 {% for recipient in recipients %}
-{% if recipient.student.student_id %}
-  <div class="recipient-card" onclick="window.location.href='{% url 'student_detail' recipient.student.student_id %}'">
-{% else %}
-  <div class="recipient-card">
-{% endif %}
+                    <div class="recipient-card" onclick="window.location.href='{% url 'student_detail' recipient.student.student_id %}'">
                         <div class="recipient-photo">
                             {% if recipient.student.photo %}
                                 <img src="{{ recipient.student.photo.url }}" alt="Фото {{ recipient.student.full_name }}" loading="lazy">

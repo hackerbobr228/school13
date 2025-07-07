@@ -9,7 +9,7 @@
         <a href="{% url 'nominations' %}" class="cta-button" data-key="learn-more">Узнать больше</a>
     </div>
     <div class="hero-image-container">
-        <div class="school-photo-wrapper">
+        <!-- <div class="school-photo-wrapper">
             <img src="{% static 'images/school-photo.jpeg' %}" 
                  alt="Школа №13 - главное здание" 
                  class="school-photo"
@@ -20,7 +20,7 @@
                     <span>{{ settings.school_name_ru }}</span>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="hero-decorative-icon">
             <i class="fas fa-school" aria-hidden="true"></i>
         </div>
@@ -116,6 +116,23 @@
     position: relative;
     overflow: hidden;
     border-bottom: 3px solid var(--line-secondary);
+    background-image: linear-gradient(
+      rgba(0, 0, 0, 0.5), 
+      rgba(0, 0, 0, 0.5)
+    ),
+    url("{% static 'images/school-photo.jpeg' %}");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+[data-theme="light"] .hero-content h1,
+[data-theme="light"] .hero-content p {
+    color: rgb(255, 255, 255);
+    text-shadow: 0 2px 3px rgba(255, 255, 255, 0.6);
+}
+[data-theme="light"] .hero::before {
+    display: none;
 }
 
 .hero::before {
