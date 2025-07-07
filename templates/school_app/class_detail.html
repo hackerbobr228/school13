@@ -32,7 +32,11 @@
         {% if students %}
             <div class="students-grid">
                 {% for student in students %}
+                    {% if student.student_id %}
                     <div class="student-card" onclick="window.location.href='{% url 'student_detail' student.student_id %}'">
+                    {% else %}
+                    <div class="student-card" title="Нет ID ученика">
+                    {% endif %}
                         <div class="student-photo">
                             {% if student.photo %}
                                 <img src="{{ student.photo.url }}" alt="Фото {{ student.full_name }}" loading="lazy">
