@@ -126,29 +126,37 @@
         <div class="nominations-section">
             <h2><i class="fas fa-medal" aria-hidden="true"></i> <span data-key="received-nominations">Полученные номинации</span></h2>
             <div class="nominations-grid">
-                {% for nomination in nominations %}
-                <div class="nomination-card">
-                    <div class="nomination-header">
-                        <div class="nomination-icon">
-                            <i class="{{ nomination.nomination.icon }}" aria-hidden="true"></i>
-                        </div>
-                        <h4>{{ nomination.nomination.title_ru }}</h4>
-                    </div>
-                    <div class="nomination-details">
-                        <p><strong data-key="award-date">Дата получения:</strong> {{ nomination.date_awarded|date:"d.m.Y" }}</p>
-                        {% if nomination.score %}
-                            <p><strong data-key="result">Результат:</strong> {{ nomination.score }}</p>
-                        {% endif %}
-                        <p><strong data-key="description">Описание:</strong> {{ nomination.achievement_description }}</p>
-                        {% if nomination.certificate_image %}
-                            <div class="certificate-preview">
-                                <img src="{{ nomination.certificate_image.url }}" alt="Сертификат" class="certificate-image">
-                            </div>
-                        {% endif %}
-                    </div>
+    {% for nomination in nominations %}
+    <div class="nomination-card">
+        {% if nomination.nomination.image %}
+        <div class="nomination-image">
+            <img src="{{ nomination.nomination.image.url }}" alt="{{ nomination.nomination.title_ru }}">
+        </div>
+        {% endif %}
+        <div class="nomination-header">
+            <h2>{{ nomination.nomination.title_ru }}</h2>
+            <p class="nomination-description"
+   data-translate="nomination-description"
+   data-original="{{ nomination.nomination.description_ru }}"
+   data-uz="{{ nomination.nomination.description_uz }}">
+   {{ nomination.nomination.description_ru }}
+</p>
+        </div>
+        <div class="nomination-details">
+            <p><strong data-key="award-date">Дата получения:</strong> {{ nomination.date_awarded|date:"d.m.Y" }}</p>
+            {% if nomination.score %}
+                <p><strong data-key="result">Результат:</strong> {{ nomination.score }}</p>
+            {% endif %}
+            {% if nomination.certificate_image %}
+                <div class="certificate-preview">
+                    <img src="{{ nomination.certificate_image.url }}" alt="Сертификат" class="certificate-image">
                 </div>
-                {% endfor %}
-            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
         </div>
         {% endif %}
     </div>
@@ -264,13 +272,15 @@
     box-shadow: var(--shadow);
     border-left: 4px solid var(--accent-color);
 }
-
 .nomination-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     margin-bottom: 1rem;
+    text-align: center;
 }
+
 
 .nomination-icon {
     width: 50px;

@@ -44,6 +44,7 @@ const translations = {
     "student-nominations": "Номинации учеников",
     "nominations-description": "Признание достижений и талантов наших учеников",
     "view-recipients": "Просмотр Получателей",
+    
     back: "Назад",
   },
   uz: {
