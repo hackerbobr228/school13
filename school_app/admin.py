@@ -4,8 +4,8 @@ from .models import SchoolClass, Student, Nomination, StudentNomination, SchoolS
 from django.contrib.auth.models import User, Group
 
 # Убираем "Пользователи" и "Группы"
-admin.site.unregister(User)
-admin.site.unregister(Group)
+# admin.site.unregister(User)
+# admin.site.unregister(Group)
 
 
 # === SchoolClass ===
@@ -80,7 +80,14 @@ class StudentAdmin(admin.ModelAdmin):
         extra_context['show_save_and_add_another'] = False
         extra_context['show_save_and_continue'] = False
         return super().changeform_view(request, object_id, form_url, extra_context=extra_context)
+    def nomination_count(self, obj):
+        return obj.nominations.count()
+    nomination_count.short_description = "Количество номинаций"
 
+    def last_nomination_date(self, obj):
+        last_nomination = obj.nominations.order_by('-date_awarded').first()
+        return last_nomination.date_awarded if last_nomination else None
+    last_nomination_date.short_description = "Дата последней номинации"
 
 # === Nomination ===
 @admin.register(Nomination)

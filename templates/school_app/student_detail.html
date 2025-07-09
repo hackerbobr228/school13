@@ -41,7 +41,7 @@
                         </div>
                         <div class="info-item">
                             <label data-key="age">Возраст:</label>
-                            <span data-translate="age" data-original="{{ student.age }} лет">{{ student.age }} лет</span>
+                            <span>{{ student.age }} лет</span>
                         </div>
                         <div class="info-item">
                             <label data-key="birth-date">Дата рождения:</label>
@@ -49,7 +49,7 @@
                         </div>
                         <div class="info-item">
                             <label data-key="gender">Пол:</label>
-                            <span data-translate="gender" data-original="{% if student.gender == 'M' %}Мужской{% else %}Женский{% endif %}">{% if student.gender == 'M' %}Мужской{% else %}Женский{% endif %}</span>
+                            <span>{% if student.gender == 'M' %}Мужской{% else %}Женский{% endif %}</span>
                         </div>
                         <div class="info-item">
                             <label data-key="student-id">ID ученика:</label>
@@ -57,110 +57,86 @@
                         </div>
                         <div class="info-item">
                             <label data-key="class">Класс:</label>
-                            <span data-translate="class-title" data-original="{{ student.school_class }}">{{ student.school_class }}</span>
+                            <span>{{ student.school_class }}</span>
                         </div>
                     </div>
                 </div>
-                
+
+                <div class="info-card">
+                    <h3>Номинации</h3>
+                    <div class="info-grid">
+                        {% for nomination, stats in nomination_stats.items %}
+                        <div class="info-item">
+                            <label>{{ nomination.title_ru }}:</label>
+                            <span>
+                                Количество: {{ stats.count }} <br>
+                                {% if stats.last_nomination_date %}
+                                    Дата последней номинации: {{ stats.last_nomination_date|date:"d.m.Y" }}
+                                {% else %}
+                                    Нет номинаций
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
                 {% if student.phone or student.email %}
                 <div class="info-card">
-                    <h3 data-key="contact-info">Контактная информация</h3>
+                    <h3>Контактная информация</h3>
                     <div class="info-grid">
                         {% if student.phone %}
                         <div class="info-item">
-                            <label data-key="phone">Телефон:</label>
+                            <label>Телефон:</label>
                             <span>{{ student.phone }}</span>
                         </div>
                         {% endif %}
                         {% if student.email %}
                         <div class="info-item">
-                            <label data-key="email">Email:</label>
+                            <label>Email:</label>
                             <span>{{ student.email }}</span>
                         </div>
                         {% endif %}
                     </div>
                 </div>
                 {% endif %}
-                
-                {% if student.parent_name or student.parent_phone %}
-                <div class="info-card">
-                    <h3 data-key="parent-info">Информация о родителях</h3>
-                    <div class="info-grid">
-                        {% if student.parent_name %}
-                        <div class="info-item">
-                            <label data-key="parent-name">ФИО родителя:</label>
-                            <span>{{ student.parent_name }}</span>
-                        </div>
+            </div>
+        </div>
+
+        {% if nominations %}
+        <div class="nominations-section">
+            <h2>Полученные номинации</h2>
+            <div class="nominations-grid">
+                {% for nomination in nominations %}
+                <div class="nomination-card">
+                    {% if nomination.nomination.image %}
+                    <div class="nomination-image">
+                        <img src="{{ nomination.nomination.image.url }}" alt="{{ nomination.nomination.title_ru }}">
+                    </div>
+                    {% endif %}
+                    <div class="nomination-header">
+                        <h2>{{ nomination.nomination.title_ru }}</h2>
+                        <p>{{ nomination.nomination.description_ru }}</p>
+                    </div>
+                    <div class="nomination-details">
+                        <p><strong>Дата получения:</strong> {{ nomination.date_awarded|date:"d.m.Y" }}</p>
+                        {% if nomination.score %}
+                            <p><strong>Результат:</strong> {{ nomination.score }}</p>
                         {% endif %}
-                        {% if student.parent_phone %}
-                        <div class="info-item">
-                            <label data-key="parent-phone">Телефон родителя:</label>
-                            <span>{{ student.parent_phone }}</span>
+                        {% if nomination.certificate_image %}
+                        <div class="certificate-preview">
+                            <img src="{{ nomination.certificate_image.url }}" alt="Сертификат" class="certificate-image">
                         </div>
                         {% endif %}
                     </div>
                 </div>
-                {% endif %}
+                {% endfor %}
             </div>
-        </div>
-        
-        {% if student.achievements or student.hobbies %}
-        <div class="additional-info">
-            {% if student.achievements %}
-            <div class="info-card">
-                <h3><i class="fas fa-trophy" aria-hidden="true"></i> <span data-key="achievements">Достижения</span></h3>
-                <p>{{ student.achievements|linebreaks }}</p>
-            </div>
-            {% endif %}
-            
-            {% if student.hobbies %}
-            <div class="info-card">
-                <h3><i class="fas fa-heart" aria-hidden="true"></i> <span data-key="hobbies">Увлечения</span></h3>
-                <p>{{ student.hobbies|linebreaks }}</p>
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-        
-        {% if nominations %}
-        <div class="nominations-section">
-            <h2><i class="fas fa-medal" aria-hidden="true"></i> <span data-key="received-nominations">Полученные номинации</span></h2>
-            <div class="nominations-grid">
-    {% for nomination in nominations %}
-    <div class="nomination-card">
-        {% if nomination.nomination.image %}
-        <div class="nomination-image">
-            <img src="{{ nomination.nomination.image.url }}" alt="{{ nomination.nomination.title_ru }}">
-        </div>
-        {% endif %}
-        <div class="nomination-header">
-            <h2>{{ nomination.nomination.title_ru }}</h2>
-            <p class="nomination-description"
-   data-translate="nomination-description"
-   data-original="{{ nomination.nomination.description_ru }}"
-   data-uz="{{ nomination.nomination.description_uz }}">
-   {{ nomination.nomination.description_ru }}
-</p>
-        </div>
-        <div class="nomination-details">
-            <p><strong data-key="award-date">Дата получения:</strong> {{ nomination.date_awarded|date:"d.m.Y" }}</p>
-            {% if nomination.score %}
-                <p><strong data-key="result">Результат:</strong> {{ nomination.score }}</p>
-            {% endif %}
-            {% if nomination.certificate_image %}
-                <div class="certificate-preview">
-                    <img src="{{ nomination.certificate_image.url }}" alt="Сертификат" class="certificate-image">
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
         </div>
         {% endif %}
     </div>
 </section>
+
 {% endblock %}
 
 {% block extra_css %}

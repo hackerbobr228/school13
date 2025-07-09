@@ -161,16 +161,24 @@ class StudentNomination(models.Model):
     date_awarded = models.DateField(verbose_name="Дата получения")
     certificate_image = models.ImageField(upload_to='certificates/', blank=True, null=True, verbose_name="Сертификат")
     score = models.CharField(max_length=50, blank=True, verbose_name="Балл/Результат")
-    
+
     class Meta:
         verbose_name = "Номинация ученика"
         verbose_name_plural = "Номинации учеников"
         unique_together = ['student', 'nomination']
         ordering = ['-date_awarded']
-    
+
     def __str__(self):
         return f"{self.student.full_name} - {self.nomination.title_ru}"
 
+    @property
+    def nominations_count(self):
+        return StudentNomination.objects.filter(student=self.student).count()
+
+    @property
+    def last_nomination_date(self):
+        last_nomination = StudentNomination.objects.filter(student=self.student).order_by('-date_awarded').first()
+        return last_nomination.date_awarded if last_nomination else None
 
 
 class SchoolSettings(models.Model):

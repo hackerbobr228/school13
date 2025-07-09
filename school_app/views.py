@@ -75,13 +75,24 @@ def class_detail(request, grade, section):
 def student_detail(request, student_id):
     student = get_object_or_404(Student, student_id=student_id, is_active=True)
     nominations = StudentNomination.objects.filter(student=student).order_by('-date_awarded')
-    
+
+    # Подсчитываем количество номинаций и дату последней номинации для каждой номинации
+    nomination_stats = {}
+    for nomination in Nomination.objects.all():
+        student_nominations = nominations.filter(nomination=nomination)
+        nomination_stats[nomination] = {
+            'count': student_nominations.count(),
+            'last_nomination_date': student_nominations.first().date_awarded if student_nominations else None
+        }
+
     context = {
         'student': student,
+        'nomination_stats': nomination_stats,  # Теперь для каждой номинации статистика
         'nominations': nominations,
         'settings': get_school_settings(),
     }
     return render(request, 'school_app/student_detail.html', context)
+
 
 def nominations_view(request):
     nominations = Nomination.objects.filter(is_active=True).order_by('name')

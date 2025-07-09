@@ -8,7 +8,7 @@ from django.conf.urls.i18n import i18n_patterns
 urlpatterns = [
     
     path('i18n/', include('django.conf.urls.i18n')),
-    path('admin/', admin.site.urls),
+    path('maktabadmin13/', admin.site.urls),
     path('', include('school_app.urls')),
 ]
 
