@@ -59,6 +59,11 @@
                             <label data-key="class">Класс:</label>
                             <span>{{ student.school_class }}</span>
                         </div>
+                        <a href="{% url 'student_pdf' student.student_id %}" class="download-btn">
+                            <i class="fas fa-file-download"></i> Скачать PDF
+                        </a>
+                        
+                        
                     </div>
                 </div>
 
@@ -141,6 +146,22 @@
 
 {% block extra_css %}
 <style>
+    .download-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+}
+
+.download-btn:hover {
+    background-color: #0056b3;
+}
+
 .profile-grid {
     display: grid;
     grid-template-columns: 300px 1fr;
