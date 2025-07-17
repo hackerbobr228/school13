@@ -24,7 +24,7 @@ def generate_student_pdf(request, student_id):
     p = canvas.Canvas(buffer, pagesize=letter)
 
     # Регистрируем и используем шрифт с поддержкой кириллицы
-    font_path = os.path.join('c:\\Users\\Bekzo\\Desktop\\mysite\\static\\fonts', 'DejaVuSans.ttf')
+    font_path = '/root/school13/static/fonts/DejaVuSans.ttf'  # Путь на сервере
     pdfmetrics.registerFont(TTFont('DejaVuSans', font_path))
     p.setFont("DejaVuSans", 12)
 
